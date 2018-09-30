@@ -29,6 +29,7 @@
       name : "Minification",
       description : "Automatically minify code from the Editor window?",
       type : { "":"No Minification",
+               "TERSER":"Terser (uglify-es)",
                "ESPRIMA":"Esprima (offline)",
                "WHITESPACE_ONLY":"Closure (online) - Whitespace Only",
                "SIMPLE_OPTIMIZATIONS":"Closure (online) - Simple Optimizations",
@@ -40,6 +41,7 @@
       name : "Module Minification",
       description : "Automatically minify modules? Only modules with a .js extension will be minified - if a file with a .min.js extension exists then it will be used instead.",
       type : { "":"No Minification",
+               "TERSER":"Terser (uglify-es)",
                "ESPRIMA":"Esprima (offline)",
                "WHITESPACE_ONLY":"Closure (online) - Whitespace Only",
                "SIMPLE_OPTIMIZATIONS":"Closure (online) - Simple Optimizations",
@@ -47,6 +49,20 @@
       defaultValue : "ESPRIMA"
     });
 
+    Espruino.Core.Config.add("ROLLUP",{
+      section : "Rollup",
+      name : "Use Rollup",
+      description : "Uses rollup.js along with rollup-plugin-espruino-modules for bundling",
+      type : "boolean",
+      defaultValue : false
+    });
+    Espruino.Core.Config.add("MODULE_MERGE",{
+      section : "Rollup",
+      name : "Unwrap modules using rollup.js",
+      description : "Uses rollup.js wihout the Modules.addCache",
+      type : "boolean",
+      defaultValue : true
+    });
 
     Espruino.Core.Config.add("MINIFICATION_Mangle",{
       section : "Minification",
@@ -265,6 +281,7 @@
       case "SIMPLE_OPTIMIZATIONS":
       case "ADVANCED_OPTIMIZATIONS": minifyCodeGoogle(code, callback, level, description); break;
       case "ESPRIMA": minifyCodeEsprima(code, callback, description); break;
+      case "TERSER": rollupTools.minifyCodeTerser(code, callback, description); break;
       default: callback(code); break;
     }
   }

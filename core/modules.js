@@ -61,6 +61,9 @@
 
     // When code is sent to Espruino, search it for modules and add extra code required to load them
     Espruino.addProcessor("transformForEspruino", function(code, callback) {
+      if (Espruino.Config.ROLLUP) {
+        return rollupTools.loadModulesRollup(code, callback);
+      }
       loadModules(code, callback);
     });
   }
