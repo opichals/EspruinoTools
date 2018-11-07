@@ -1,3 +1,17 @@
+(function (root, factory) {
+    'use strict';
+
+    if (typeof define === 'function' && define.amd) {
+        define(['exports'], factory);
+    } else if (typeof exports !== 'undefined') {
+        factory(exports);
+    } else {
+        factory((root.rollupTools = {}));
+    }
+}(this, function(exports) {
+
+// =========================================================
+
 function loadModulesRollup(code, callback) {
     var board = Espruino.Core.Env.getBoardData();
     var env = Espruino.Core.Env.getData();
@@ -62,7 +76,7 @@ function minifyCodeTerser(code, callback, description) {
     });
 }
 
-module.exports = {
-    loadModulesRollup,
-    minifyCodeTerser
-};
+exports.loadModulesRollup = loadModulesRollup
+exports.minifyCodeTerser = minifyCodeTerser;
+
+}));
