@@ -262,6 +262,23 @@
     }
   }
 
+  function minifyCodeTerser(code, callback, description){
+    rollupTools.minifyCodeTerser(code)
+      .then(generated => {
+        var minified = generated.code;
+
+        // FIXME: needs warnings?
+        Espruino.Core.Notifications.info('Terser no errors'+description+'. Minifying ' + code.length + ' bytes to ' + minified.length + ' bytes');
+        callback(minified);
+      })
+      .catch(err => {
+        Espruino.Core.Notifications.warning("Terser errors"+description+" - sending unminified code.");
+        Espruino.Core.Notifications.error(String(err).trim());
+        callback(code);
+      });
+  }
+
+
   function minify(code, callback, level, isModule, description) {
     var minifyCode = code;
     var minifyCallback = callback;
@@ -281,7 +298,7 @@
       case "SIMPLE_OPTIMIZATIONS":
       case "ADVANCED_OPTIMIZATIONS": minifyCodeGoogle(code, callback, level, description); break;
       case "ESPRIMA": minifyCodeEsprima(code, callback, description); break;
-      case "TERSER": rollupTools.minifyCodeTerser(code, callback, description); break;
+      case "TERSER": minifyCodeTerser(code, callback, description); break;
       default: callback(code); break;
     }
   }

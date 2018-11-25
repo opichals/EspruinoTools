@@ -27,7 +27,7 @@ function loadModulesRollup(code, callback) {
         modules.push([entryFilename, code]);
     }
 
-    espruinoRollup.bundle({
+    return espruinoRollup.bundle({
         modules,
         input: entryFilename,
         output: {
@@ -43,37 +43,13 @@ function loadModulesRollup(code, callback) {
 
             // TODO: handle opts MINIFICATION_Xyz
         }
-    }).then(minified => {
-        console.log('rollup: '+minified.length+' bytes');
-
-        // FIXME: needs warnings?
-        Espruino.Core.Notifications.info('Rollup no errors. Bundling ' + code.length + ' bytes to ' + minified.length + ' bytes');
-        callback(minified);
-    }).catch(err => {
-        console.log('rollup:error', err);
-        Espruino.Core.Notifications.warning("Rollup errors - sending unminified bundle.");
-        callback(code);
-
-        Espruino.Core.Notifications.error(String(err).trim());
-    });
+    })
 }
 
-function minifyCodeTerser(code, callback, description) {
-    espruinoRollup.minify(code, {
+function minifyCodeTerser(code, callback) {
+    return espruinoRollup.minify(code, {
         // TODO: handle opts MINIFICATION_Xyz
-    }).then(minified => {
-        console.log('terser: '+minified.length+' bytes');
-
-        // FIXME: needs warnings?
-        Espruino.Core.Notifications.info('Terser no errors'+description+'. Minifying ' + code.length + ' bytes to ' + minified.length + ' bytes');
-        callback(minified);
-    }).catch(err => {
-        console.log('terser:error', err);
-        Espruino.Core.Notifications.warning("Terser errors"+description+" - sending unminified code.");
-        callback(code);
-
-        Espruino.Core.Notifications.error(String(err).trim());
-    });
+    })
 }
 
 exports.loadModulesRollup = loadModulesRollup

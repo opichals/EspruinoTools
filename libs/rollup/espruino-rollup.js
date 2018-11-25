@@ -3,66 +3,40 @@ const rollup = require('rollup');
 const espruinoModules = require('rollup-plugin-espruino-modules');
 
 function bundle(options) {
-    console.log(`running Rollup version ${rollup.VERSION}`);
+    const opts = { ...options };
 
     if (typeof vol !== 'undefined') { // only in browser (fs = memfs)
         vol.fromJSON({'/modules': null});
 
-        if (options.modules) {
+        if (opts.modules) {
             try {
-              options.modules.forEach(([name, code]) => writeFileSync(name, code));
+              opts.modules.forEach(([name, code]) => writeFileSync(name, code));
             } catch (err) {
-              console.log('err', err);
+              console.error('Write file failed:', err);
             }
-            delete options.modules;
+            delete opts.modules;
         }
     }
 
     const warnings = [];
+    opts.onwarn = warning => (warnings.push( warning ), (options.onwarn && options.onwarn(warning)));
 
-    const config = espruinoModules.buildEspruinoConfig(options);
+    const config = espruinoModules.buildRollupConfig(opts);
 
-    config.onwarn = ( warning ) => {
-        warnings.push( warning );
-
-        console.group( warning.loc ? warning.loc.file : '' );
-
-        console.warn( warning.message );
-
-        if ( warning.frame ) {
-            console.log( warning.frame );
-        }
-
-        if ( warning.url ) {
-            console.log( `See ${warning.url} for more information` );
-        }
-
-        console.groupEnd();
-    };
-
-    return rollup.rollup(config).then(bundle => {
-        console.log({
-            imports: bundle.imports,
-            exports: bundle.exports
-        });
-
-        return bundle.generate(config.output).then(generated => {
-            console.log({ warnings });
-            return generated.code;
-        });
-    }).catch(error => {
-        console.log('error', ({ error }));
-        if ( error.frame ) console.log( error.frame );
-        throw error;
-    });
+    return rollup.rollup(config).then(bundle =>
+        bundle.generate(config.output).then(generated => {
+            generated.warnings = warnings;
+            return generated;
+        })
+    );
 }
 
 function minify(code, options) {
     return new Promise((resolve, reject) => {
         try {
-            const minifyOptions = espruinoModules.buildEspruinoMinifyConfig(options)
-            const minified = espruinoModules.espruinoMinify(code, minifyOptions);
-            resolve(minified.code);
+            const minifyOptions = espruinoModules.buildMinifyConfig(options)
+            const generated = espruinoModules.minify(code, minifyOptions);
+            resolve(generated);
         } catch(e) {
             reject(e);
         }
