@@ -7,7 +7,7 @@
     "espruino": "./bin/espruino-cli.js"
   },
   "scripts": {
-    "build": "cd libs/rollup && npm run build"
+    "build": "cd libs/rollup && npm install && npm run build"
   },
   "repository": {
     "type": "git",
