@@ -228,8 +228,7 @@
       })
       .catch(err => {
         console.log('rollup:error', err);
-        Espruino.Core.Notifications.warning("Rollup errors - sending unminified bundle.");
-        Espruino.Core.Notifications.error(String(err).trim());
+        Espruino.Core.Notifications.error("Rollup errors - Bundling failed: " + String(err).trim());
         callback(code);
       });
   }
