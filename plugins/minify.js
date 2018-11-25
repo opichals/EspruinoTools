@@ -280,6 +280,11 @@
 
 
   function minify(code, callback, level, isModule, description) {
+    if (Espruino.Config.ROLLUP) {
+        // already minified by the ROLLUP pipeline
+        return callback(code);
+    }
+
     var minifyCode = code;
     var minifyCallback = callback;
     if (isModule) {
