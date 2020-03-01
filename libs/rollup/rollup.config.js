@@ -1,9 +1,9 @@
-import json from 'rollup-plugin-json';
-import alias from 'rollup-plugin-alias';
-import resolve from 'rollup-plugin-node-resolve';
+import alias from '@rollup/plugin-alias';
+import commonjs from '@rollup/plugin-commonjs';
+import json from '@rollup/plugin-json';
+import resolve from '@rollup/plugin-node-resolve';
 import builtins from 'rollup-plugin-node-builtins';
 import globals from 'rollup-plugin-node-globals';
-import commonjs from 'rollup-plugin-commonjs';
 import { terser } from 'rollup-plugin-terser';
 
 const buildPlugins = opts => [
@@ -14,12 +14,25 @@ const buildPlugins = opts => [
     }),
     commonjs({
       namedExports: {
-        'node_modules/resolve/index.js': [ 'sync' ],
+        'node_modules/@rollup/plugin-commonjs/node_modules/resolve/index.js': [ 'isCore', 'sync' ],
         'node_modules/async/dist/async.js': [ 'eachSeries' ],
         ...opts.commonjs.namedExports
       }
     }),
   ];
+
+
+// Requires the following patch:
+//
+// --- node_modules/rollup-plugin-node-builtins/src/es6/path.js
+// +export var posix = {
+// +  relative: relative,
+// +  join: join,
+// +  isAbsolute: isAbsolute,
+// +  normalize: normalize,
+// +  resolve: resolve
+// +};
+//  export default {
 
 const config = {
   input  : 'espruino-rollup.js',
@@ -30,8 +43,11 @@ const config = {
   },
   plugins: [
     alias({
-      fs: require.resolve('memfs'),
-      debug: require.resolve('./debug-shim')
+      entries: {
+        rollup: require.resolve('rollup/dist/rollup.browser'),
+        fs: require.resolve('memfs'),
+        debug: require.resolve('./debug-shim')
+      }
     }),
     ...buildPlugins({
       resolve: {
@@ -40,6 +56,7 @@ const config = {
       commonjs: {
         namedExports: {
           'node_modules/memfs/lib/index.js': [
+            'existsSync',
             'statSync', 'lstatSync', 'realpathSync',
             'mkdirSync', 'readdirSync',
             'readFileSync',
@@ -49,7 +66,7 @@ const config = {
         }
       }
     }),
-    builtins(),
+    builtins({crypto: true}),
     globals({
         dirname: false
     }),

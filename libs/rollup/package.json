@@ -11,16 +11,16 @@
   "license": "MIT",
   "dependencies": {
     "memfs": "=2.12.1",
-    "rollup": "^0.67.4",
-    "rollup-plugin-espruino-modules": "opichals/rollup-plugin-espruino-modules"
+    "rollup": "^1.32.0",
+    "rollup-plugin-espruino-modules": "^0.5.0"
   },
   "devDependencies": {
-    "rollup-plugin-alias": "^1.4.0",
-    "rollup-plugin-commonjs": "^9.1.8",
-    "rollup-plugin-json": "^3.1.0",
+    "@rollup/plugin-alias": "^3.0.1",
+    "@rollup/plugin-commonjs": "^11.0.2",
+    "@rollup/plugin-json": "^4.0.2",
+    "@rollup/plugin-node-resolve": "^7.1.1",
     "rollup-plugin-node-builtins": "^2.1.2",
     "rollup-plugin-node-globals": "^1.4.0",
-    "rollup-plugin-node-resolve": "^3.4.0",
-    "rollup-plugin-terser": "^3.0.0"
+    "rollup-plugin-terser": "^5.2.0"
   }
 }

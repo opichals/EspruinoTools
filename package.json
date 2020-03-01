@@ -20,8 +20,8 @@
     "escodegen": "",
     "esmangle": "",
     "esprima": "",
-    "rollup": "^0.66.2",
-    "rollup-plugin-espruino-modules": "opichals/rollup-plugin-espruino-modules",
+    "rollup": "^1.32.0",
+    "rollup-plugin-espruino-modules": "0.5.0",
     "utf8": "^2.1.2"
   },
   "optionalDependencies": {
