@@ -22,18 +22,6 @@ const buildPlugins = opts => [
   ];
 
 
-// Requires the following patch:
-//
-// --- node_modules/rollup-plugin-node-builtins/src/es6/path.js
-// +export var posix = {
-// +  relative: relative,
-// +  join: join,
-// +  isAbsolute: isAbsolute,
-// +  normalize: normalize,
-// +  resolve: resolve
-// +};
-//  export default {
-
 const config = {
   input  : 'espruino-rollup.js',
   output : {
@@ -45,6 +33,7 @@ const config = {
     alias({
       entries: {
         rollup: require.resolve('rollup/dist/rollup.browser'),
+        path: require.resolve('path-browserify'),
         fs: require.resolve('memfs'),
         debug: require.resolve('./debug-shim')
       }
@@ -55,6 +44,12 @@ const config = {
       },
       commonjs: {
         namedExports: {
+          'node_modules/path-browserify/index.js': [
+            'dirname', 'basename', 'extname',
+            'normalize', 'resolve',
+            'sep',
+            'posix',
+          ],
           'node_modules/memfs/lib/index.js': [
             'existsSync',
             'statSync', 'lstatSync', 'realpathSync',
