@@ -245,7 +245,7 @@
   function loadModulesRollup(code, callback) {
     rollupTools.loadModulesRollup(code)
       .then(generated => {
-        const minified = generated.code;
+        const minified = generated.output[0].code;
         console.log('rollup: '+minified.length+' bytes');
 
         // FIXME: needs warnings?
